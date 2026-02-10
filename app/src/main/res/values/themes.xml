@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.GoldPriceApp" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/gold_primary</item>
+        <item name="android:colorPrimaryDark">@color/gold_primary_dark</item>
+        <item name="android:colorAccent">@color/gold_secondary</item>
+        <item name="android:statusBarColor">@color/gold_primary_dark</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowBackground">@color/background_light</item>
+    </style>
+</resources>

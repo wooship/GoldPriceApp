@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 黄金色系 -->
+    <color name="gold_primary">#FFD700</color>
+    <color name="gold_primary_dark">#DAA520</color>
+    <color name="gold_secondary">#B8860B</color>
+    <color name="gold_light">#FFF8DC</color>
+    <color name="gold_gradient_start">#FFD700</color>
+    <color name="gold_gradient_end">#FFA500</color>
+
+    <!-- 涨跌颜色 -->
+    <color name="price_up">#FF4444</color>
+    <color name="price_down">#00C853</color>
+    <color name="price_neutral">#666666</color>
+
+    <!-- 基础颜色 -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="background_light">#FFFBF0</color>
+    <color name="background_dark">#1A1A1A</color>
+</resources>

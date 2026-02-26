@@ -22,12 +22,17 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.goldprice.app.presentation.ui.components.MetalPriceCard
 import com.goldprice.app.presentation.viewmodel.MetalPriceUiState
 import com.goldprice.app.presentation.viewmodel.MetalPriceViewModel
@@ -41,6 +46,7 @@ fun MetalPriceScreen(
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val lifecycleOwner = LocalLifecycleOwner.current
+    val swipeRefreshState = rememberSwipeRefreshState(uiState.isRefreshing)
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { error ->
@@ -65,6 +71,10 @@ fun MetalPriceScreen(
         }
     }
 
+    fun onRefresh() {
+        viewModel.loadAllPrices()
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -83,7 +93,9 @@ fun MetalPriceScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = { onRefresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)

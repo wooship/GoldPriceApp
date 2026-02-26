@@ -3,6 +3,7 @@ package com.goldprice.app.presentation.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewModelScope
 import com.goldprice.app.data.cache.PriceCache
 import com.goldprice.app.domain.model.CurrencyType
@@ -14,6 +15,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -24,7 +27,8 @@ data class MetalPriceUiState(
     val silverUsdPrice: MetalPrice? = null,
     val silverCnyPrice: MetalPrice? = null,
     val error: String? = null,
-    val lastUpdateTime: Long = 0L
+    val lastUpdateTime: Long = 0L,
+    val isRefreshing: Boolean = false
 ) {
     val hasAnyPrice: Boolean
         get() = goldUsdPrice != null || goldCnyPrice != null || silverUsdPrice != null || silverCnyPrice != null
@@ -71,7 +75,7 @@ class MetalPriceViewModel(
         viewModelScope.launch {
             while (true) {
                 android.util.Log.d("MetalPriceViewModel", "Auto refresh trigger ${System.currentTimeMillis()}")
-                delay(30000)
+                delay(60000)
                 loadAllPrices()
             }
         }
@@ -79,6 +83,7 @@ class MetalPriceViewModel(
 
     fun loadAllPrices() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isRefreshing = true) }
             android.util.Log.d("MetalPriceViewModel", "Loading all prices at ${System.currentTimeMillis()}")
             val goldUsdResult = getMetalPriceUseCase(MetalType.GOLD, CurrencyType.USD)
             val goldCnyResult = getMetalPriceUseCase(MetalType.GOLD, CurrencyType.CNY)
@@ -91,13 +96,14 @@ class MetalPriceViewModel(
             val newSilverCny = silverCnyResult.getOrNull()
 
             val currentState = _uiState.value
-            
+
             val newState = currentState.copy(
                 goldUsdPrice = newGoldUsd ?: currentState.goldUsdPrice,
                 goldCnyPrice = newGoldCny ?: currentState.goldCnyPrice,
                 silverUsdPrice = newSilverUsd ?: currentState.silverUsdPrice,
                 silverCnyPrice = newSilverCny ?: currentState.silverCnyPrice,
-                lastUpdateTime = if (newGoldUsd != null || newGoldCny != null || newSilverUsd != null || newSilverCny != null) System.currentTimeMillis() else currentState.lastUpdateTime
+                lastUpdateTime = if (newGoldUsd != null || newGoldCny != null || newSilverUsd != null || newSilverCny != null) System.currentTimeMillis() else currentState.lastUpdateTime,
+                isRefreshing = false
             )
 
             val errors = listOfNotNull(

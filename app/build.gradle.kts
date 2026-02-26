@@ -79,6 +79,9 @@ dependencies {
     // DataStore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    // Accompanist - SwipeRefresh
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.32.0")
+
     // Charts - MPAndroidChart
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
